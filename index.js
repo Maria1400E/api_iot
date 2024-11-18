@@ -162,7 +162,7 @@ mqttClient.on('connect', async () => {
 
 // Endpoint para consultar los datos ingresados en DataOrigen
 app.get('/data', (req, res) => {
-    const sql = 'SELECT * FROM DataOrigen';
+    const sql = 'SELECT * FROM DataOrigen ORDER BY IdData DESC LIMIT  1';
     db.query(sql, (err, results) => {
         if (err) {
             console.error('Error al obtener los datos:', err);
