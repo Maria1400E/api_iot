@@ -27,7 +27,7 @@ db.connect((err) => {
 
 // Configuración MQTT
 const mqttClient = mqtt.connect(process.env.MQTT_BROKER);
-const documento = '654987321';
+const documento = '456789123';
 
 // Tópicos MQTT
 const tempCorporalTopic = `Monitoreo/${documento}/tempCorporal`;
@@ -168,7 +168,7 @@ app.get('/data', (req, res) => {
             console.error('Error al obtener los datos:', err);
             return res.status(500).send('Error al obtener los datos');
         }
-        res.json(results);  // Asegúrate de que esto devuelva JSON válido
+        res.json(results);
     });
 });
 
