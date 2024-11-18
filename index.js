@@ -1,17 +1,20 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const mqtt = require('mqtt');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());  
 
 // Configuración de la base de datos
 const db = mysql.createConnection({
-    host: 'asidi.xyz',
-    user: 'admin',
-    password: 'Admin2024',
-    database: 'bddata_iot'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 db.connect((err) => {
@@ -23,7 +26,7 @@ db.connect((err) => {
 });
 
 // Configuración MQTT
-const mqttClient = mqtt.connect('ws://broker.hivemq.com:8000/mqtt');
+const mqttClient = mqtt.connect(process.env.MQTT_BROKER);
 const documento = '654987321';
 
 // Tópicos MQTT
@@ -157,7 +160,6 @@ mqttClient.on('connect', async () => {
   }
 });
 
-
 // Endpoint para consultar los datos ingresados en DataOrigen
 app.get('/data', (req, res) => {
     const sql = 'SELECT * FROM DataOrigen';
@@ -187,8 +189,7 @@ app.post('/insertData', (req, res) => {
     });
 });
 
-// Iniciar el servidor
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+// Iniciar servidor
+app.listen(8000, () => {
+    console.log('Servidor API en ejecución en http://localhost:8000');
 });
