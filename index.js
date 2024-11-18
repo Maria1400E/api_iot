@@ -162,15 +162,30 @@ mqttClient.on('connect', async () => {
 
 // Endpoint para consultar los datos ingresados en DataOrigen
 app.get('/data', (req, res) => {
-    const sql = 'SELECT * FROM DataOrigen ORDER BY IdData DESC LIMIT  1';
+    const sql = `
+        SELECT *
+        FROM DataOrigen
+        ORDER BY IdData DESC
+    `;
+    
     db.query(sql, (err, results) => {
         if (err) {
             console.error('Error al obtener los datos:', err);
             return res.status(500).send('Error al obtener los datos');
         }
-        res.json(results);
+
+        // Agrupar por Metrica y obtener el más reciente
+        const groupedData = {};
+        results.forEach((row) => {
+            if (!groupedData[row.Metrica]) {
+                groupedData[row.Metrica] = row; // Guardar solo el más reciente (ya que está ordenado)
+            }
+        });
+
+        return res.status(200).json(groupedData);
     });
 });
+
 
 // Endpoint para insertar datos manualmente (para pruebas)
 app.post('/insertData', (req, res) => {
